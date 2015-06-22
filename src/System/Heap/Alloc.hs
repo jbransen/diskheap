@@ -12,7 +12,8 @@ import Control.Monad.Error
 import Control.Monad.Reader
 import Data.Binary
 import Data.IntMap (IntMap)
-import Data.Record.Label
+import Data.Label hiding (get, modify)
+import Data.Label.Monadic
 import System.Heap.Error
 import System.Heap.Pointer
 import System.IO
@@ -60,13 +61,13 @@ allocate :: Size -> Heap (Offset, Size)
 allocate s =
   do b <- findFreeBlock s
      (o, t) <- case b of
-       Nothing     -> flip (,) s <$> getM size <* modM size (+(16+s))
+       Nothing     -> flip (,) s <$> gets size <* modify size (+(16+s))
        Just (t, o) -> return (o, fromIntegral t)
-     modM used (Im.alter (Just . maybe [t] (t:)) (fromIntegral o))
+     modify used (Im.alter (Just . maybe [t] (t:)) (fromIntegral o))
      return (o, t)
 
 findFreeBlock :: Size -> Heap (Maybe (Int, Offset))
-findFreeBlock s = find <$> getM unused
+findFreeBlock s = find <$> gets unused
   where find = fmap (fmap head . fst)
              . Im.minViewWithKey
              . snd

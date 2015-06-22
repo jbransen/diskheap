@@ -14,7 +14,7 @@ Library
   GHC-Options:      -threaded -Wall
   HS-Source-Dirs:   src
 
-  Build-Depends:    base ==4.*
+  Build-Depends:    base ==4.*, mtl, bytestring, containers, binary, transformers, fclabels
 
-  Exposed-modules:  Heap.Heap
+  Exposed-modules:  System.Heap.Heap, System.Heap.Pointer, System.Heap.Read, System.Heap.Write, System.Heap.Alloc, System.Heap.Error
 
